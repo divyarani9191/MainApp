@@ -1,73 +1,59 @@
-"""
-EmoHeal - Main FastAPI Application
-Serves both API and React frontend static files.
-"""
+# ================= CAMERA + VOICE APIs =================
 
-import logging
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-import os
+from fastapi import File, UploadFile
+import numpy as np
+import cv2
+import soundfile as sf
+from fer import FER
+from transformers import pipeline
 
-from app.config import validate_config
-from app.database.db import connect_to_mongo, close_mongo_connection, create_indexes
-from app.routes.chat import router as chat_router
-from app.routes.history import router as history_router
+# -------- CAMERA SETUP --------
+detector = FER(mtcnn=False)
 
-# ── Logging ───────────────────────────────────────────────
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+@app.post("/detect-emotion")
+async def detect_emotion(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        np_arr = np.frombuffer(contents, np.uint8)
+        image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+
+        faces = detector.detect_emotions(image)
+
+        if not faces:
+            return {"emotion": "no_face"}
+
+        emotions = faces[0]["emotions"]
+        emotion = max(emotions, key=emotions.get)
+
+        return {"emotion": emotion}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# -------- VOICE SETUP --------
+audio_model = pipeline(
+    "audio-classification",
+    model="ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition"
 )
-logger = logging.getLogger(__name__)
 
-validate_config()
+@app.post("/detect-voice")
+async def detect_voice(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
 
-app = FastAPI(
-    title="EmoHeal API",
-    version="1.0.0",
-    description="AI-powered emotional support chatbot"
-)
+        with open("temp.wav", "wb") as f:
+            f.write(contents)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+        speech, sr_rate = sf.read("temp.wav")
 
-# ── API Routers ───────────────────────────────────────────
-app.include_router(chat_router)
-app.include_router(history_router)
+        if len(speech.shape) > 1:
+            speech = np.mean(speech, axis=1)
 
-# ── Serve React frontend build ────────────────────────────
-FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+        result = audio_model({"array": speech, "sampling_rate": sr_rate})
+        label = result[0]['label'].lower()
 
-if os.path.exists(FRONTEND_DIST):
-    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")), name="assets")
+        return {"emotion": label}
 
-    @app.get("/", include_in_schema=False)
-    @app.get("/{full_path:path}", include_in_schema=False)
-    async def serve_frontend(full_path: str = ""):
-        index = os.path.join(FRONTEND_DIST, "index.html")
-        return FileResponse(index)
-
-# ── Startup & Shutdown ────────────────────────────────────
-@app.on_event("startup")
-async def startup():
-    await connect_to_mongo()
-    await create_indexes()
-    logger.info("🚀 EmoHeal is running at http://localhost:8000")
-
-
-@app.on_event("shutdown")
-async def shutdown():
-    await close_mongo_connection()
-    logger.info("🔌 EmoHeal stopped")
-
-
-@app.get("/health")
-async def health():
-    return {"status": "healthy", "service": "EmoHeal API"}
+    except Exception as e:
+        return {"error": str(e)}
