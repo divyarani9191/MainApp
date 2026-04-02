@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EmoHeal | Feedback</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* Feedback page specific styling */
+    .feedback-container {
+      max-width: 500px;
+      margin: 60px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .feedback-container h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .rating {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .rating span {
+      font-size: 30px;
+      cursor: pointer;
+      margin: 0 6px;
+      color: #ccc;
+      transition: 0.2s;
+    }
+
+    .rating span.active {
+      color: gold;
+      transform: scale(1.2);
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      resize: none;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    /* 🔴 Stylish Logout Button */
+.logout {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ff4d6d, #ff1a1a);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.25);
+}
+
+/* Hover effect */
+.logout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 0, 0, 0.35);
+}
+
+/* Click effect */
+.logout:active {
+  transform: scale(0.95);
+}
+
+    .submit-btn {
+      padding: 10px 30px;
+      border-radius: 25px;
+      border: none;
+      background: linear-gradient(45deg, #7f00ff, #b200ff);
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .submit-btn:hover {
+      opacity: 0.9;
+    }
+
+    .back-btn {
+      display: block;
+      margin-top: 15px;
+      color: #5b2cff;
+      text-decoration: none;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- 🔝 NAVBAR -->
+<header class="navbar">
+  <div class="logo">EmoHeal</div>
+  <div class="nav-buttons">
+    <button class="logout" onclick="logout()">🚪 Logout</button>
+  </div>
+</header>
+
+<!-- ⭐ FEEDBACK FORM -->
+<div class="feedback-container">
+  <h2>Your Feedback</h2>
+
+  <!-- Star Rating -->
+  <div class="rating" id="ratingStars">
+    <span onclick="setRating(1)">★</span>
+    <span onclick="setRating(2)">★</span>
+    <span onclick="setRating(3)">★</span>
+    <span onclick="setRating(4)">★</span>
+    <span onclick="setRating(5)">★</span>
+  </div>
+
+  <!-- Comment -->
+  <textarea id="comment" placeholder="Write your feedback here..."></textarea>
+
+  <!-- Submit -->
+  <button class="submit-btn" onclick="submitFeedback()">
+    Submit Feedback
+  </button>
+
+  <a href="index.html" class="back-btn">← Back to Dashboard</a>
+</div>
+
+<script>
+  const API_BASE = "http://localhost:8000";
+  let selectedRating = 0;
+  const userID = localStorage.getItem("userID") || "6968faf10ac167df95f56cb5";
+
+  function setRating(rating) {
+    selectedRating = rating;
+    const stars = document.querySelectorAll("#ratingStars span");
+    stars.forEach((star, index) => {
+      star.classList.toggle("active", index < rating);
+    });
+  }
+
+  function submitFeedback() {
+    const comment = document.getElementById("comment").value.trim();
+
+    if (selectedRating === 0) {
+      alert("Please select a rating ⭐");
+      return;
+    }
+
+    fetch(`${API_BASE}/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userID,
+        rating: selectedRating,
+        comment
+      })
+    })
+      .then(res => res.json())
+      .then(() => {
+        alert("Thank you for your feedback 💙");
+        window.location.href = "index.html";
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Something went wrong");
+      });
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>

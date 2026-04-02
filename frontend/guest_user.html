@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EmoHeal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(-45deg, #00c6ff, #0072ff, #6a11cb, #2575fc);
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
+    color:#0f172a;
+}
+
+@keyframes gradientBG {
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* NAVBAR */
+.navbar {
+    display:flex;
+    justify-content:space-between;
+    padding:20px 60px;
+    background:rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    font-size:22px;
+    font-weight:600;
+    color:#0072ff;
+}
+
+/* HERO */
+.hero {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:100px 60px;
+}
+
+.hero-text {
+    max-width:520px;
+    color:white;
+}
+
+.hero-text h1 {
+    font-size:60px;
+}
+
+.hero-text p {
+    margin-top:20px;
+    font-size:18px;
+    opacity:0.9;
+}
+
+.hero-buttons {
+    margin-top:30px;
+}
+
+.hero-buttons a {
+    padding:14px 30px;
+    border-radius:30px;
+    text-decoration:none;
+    margin-right:12px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.btn-primary {
+    background:white;
+    color:#0072ff;
+}
+
+.btn-outline {
+    border:2px solid white;
+    color:white;
+}
+
+/* HERO IMAGE */
+.hero-image img {
+    width:340px;
+    border-radius:20px;
+}
+
+/* FEATURES */
+.features-section {
+    padding:60px 80px;
+}
+
+.features-section h2 {
+    text-align:center;
+    font-size:40px;
+    margin-bottom:50px;
+    color:white;
+}
+
+.feature-row {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:60px;
+}
+
+.feature-row.reverse {
+    flex-direction:row-reverse;
+}
+
+.feature-text {
+    width:50%;
+    color:white;
+}
+
+.feature-text h3 {
+    font-size:26px;
+}
+
+.feature-text p {
+    margin-top:12px;
+    font-size:16px;
+}
+
+.feature-image {
+    width:50%;
+}
+
+.feature-image img {
+    width:420px;
+    border-radius:20px;
+}
+
+/* FOOTER */
+footer {
+    text-align:center;
+    padding:20px;
+    color:white;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .hero { flex-direction:column; text-align:center; }
+    .feature-row { flex-direction:column; }
+    .feature-row.reverse { flex-direction:column; }
+    .feature-text, .feature-image { width:100%; text-align:center; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="logo">EmoHeal 🌿</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-text">
+        <h1 id="typing"></h1>
+
+        <p>
+            Your intelligent emotional wellness companion — understanding your feelings 
+            through voice, facial expressions, and conversations.
+        </p>
+
+        <div class="hero-buttons">
+            <!-- ✅ SIMPLE REDIRECT -->
+            <a href="login.html" class="btn-outline">Login</a>
+            <a href="register.html" class="btn-primary">Register</a>
+        </div>
+    </div>
+
+    <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9">
+    </div>
+</div>
+
+<!-- FEATURES -->
+<div class="features-section">
+
+<h2>How EmoHeal Helps You</h2>
+
+<div class="feature-row">
+    <div class="feature-text">
+        <h3>🎧 Audio Emotion Detection</h3>
+        <p>Understand emotions from your voice and get personalized music suggestions.</p>
+    </div>
+    <div class="feature-image">
+        <img src="https://images.unsplash.com/photo-1589903308904-1010c2294adc">
+    </div>
+</div>
+
+<div class="feature-row reverse">
+    <div class="feature-text">
+        <h3>📷 Facial Emotion Recognition</h3>
+        <p>Detect facial expressions and instantly match music to your mood.</p>
+    </div>
+    <div class="feature-image">
+        <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e">
+    </div>
+</div>
+
+<div class="feature-row">
+    <div class="feature-text">
+        <h3>🤖 AI Therapy Chatbot</h3>
+        <p>Talk freely with an AI companion that listens and supports you anytime.</p>
+    </div>
+    <div class="feature-image">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
+    </div>
+</div>
+
+<div class="feature-row reverse">
+    <div class="feature-text">
+        <h3>🎮 Relaxation & Mind Games</h3>
+        <p>Play calming games designed to reduce stress and refresh your mind.</p>
+    </div>
+    <div class="feature-image">
+        <img src="https://images.unsplash.com/photo-1598550476439-6847785fcea6">
+    </div>
+</div>
+
+</div>
+
+<footer>
+© 2026 EmoHeal 🌱
+</footer>
+
+<script>
+const text = "Feel better with EmoHeal.";
+let i = 0;
+
+function typeEffect() {
+    if (i < text.length) {
+        document.getElementById("typing").innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeEffect, 40);
+    }
+}
+typeEffect();
+</script>
+
+</body>
+</html>
